@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 const auth = require('./middlewares/auth');
 const { signin, signup, logout } = require('./controllers/user');
 const NotFoundError = require('./errors/NotFoundError');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 require('dotenv').config();
 
@@ -17,6 +18,8 @@ app.use(bodyParser.json());
 
 app.use(cookieParser());
 
+app.use(requestLogger);
+
 app.post('/signin', signin);
 app.post('/signup', signup);
 app.get('/logout', auth, logout);
@@ -27,6 +30,8 @@ app.use('/', auth, require('./routes/movies'));
 app.use(auth, () => {
   throw new NotFoundError();
 });
+
+app.use(errorLogger);
 
 app.use(require('./middlewares/errorHandler'));
 
