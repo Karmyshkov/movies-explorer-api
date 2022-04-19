@@ -3,11 +3,8 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const { errors } = require('celebrate');
-const auth = require('./middlewares/auth');
-const { signin, signup, signout } = require('./controllers/user');
-const NotFoundError = require('./errors/NotFoundError');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
-const { signinValidate, signupValidate } = require('./middlewares/validation');
+const routes = require('./routes/index');
 
 require('dotenv').config();
 
@@ -22,16 +19,7 @@ app.use(cookieParser());
 
 app.use(requestLogger);
 
-app.post('/signin', signinValidate, signin);
-app.post('/signup', signupValidate, signup);
-app.get('/signout', auth, signout);
-
-app.use('/', auth, require('./routes/users'));
-app.use('/', auth, require('./routes/movies'));
-
-app.use(auth, () => {
-  throw new NotFoundError();
-});
+app.use('/', routes);
 
 app.use(errorLogger);
 
