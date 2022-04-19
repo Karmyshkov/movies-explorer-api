@@ -2,7 +2,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const auth = require('./middlewares/auth');
-const { signin, signup } = require('./controllers/user');
+const { signin, signup, logout } = require('./controllers/user');
+const NotFoundError = require('./errors/NotFoundError');
 
 require('dotenv').config();
 
@@ -15,9 +16,14 @@ app.use(bodyParser.json());
 
 app.post('/signin', signin);
 app.post('/signup', signup);
+app.get('/logout', logout);
 
 app.use('/', auth, require('./routes/users'));
 app.use('/', auth, require('./routes/movies'));
+
+app.use(auth, () => {
+  throw new NotFoundError();
+});
 
 app.use(require('./middlewares/errorHandler'));
 
