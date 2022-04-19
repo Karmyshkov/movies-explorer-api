@@ -80,8 +80,24 @@ const logout = (req, res) => res
   .clearCookie('jwt', { httpOnly: true, sameSite: true })
   .send({ message: 'Успешно вышли из системы' });
 
+const getCurrentUser = (req, res, next) => {
+  User.findById(req.user._id)
+    .orFail(() => {
+      throw new BadRequestError('Пользователь с указанным _id не найден');
+    })
+    .then((user) => res.status(200).send({ data: user }))
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new BadRequestError('Пользователь с указанным _id не найден'));
+      } else {
+        next(err);
+      }
+    });
+};
+
 module.exports = {
   signin,
   signup,
   logout,
+  getCurrentUser,
 };
