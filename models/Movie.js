@@ -47,12 +47,9 @@ const schema = new Schema({
     },
   },
   owner: {
-    type: String,
     required: true,
-  },
-  movieId: {
-    type: String,
-    required: true,
+    type: Schema.Types.ObjectId,
+    ref: 'User',
   },
   nameRU: {
     type: String,
