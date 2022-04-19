@@ -80,7 +80,7 @@ const logout = (req, res) => res
   .clearCookie('jwt', { httpOnly: true, sameSite: true })
   .send({ message: 'Успешно вышли из системы' });
 
-const getCurrentUser = (req, res, next) => {
+const getUserInfo = (req, res, next) => {
   User.findById(req.user._id)
     .orFail(() => {
       throw new BadRequestError('Пользователь с указанным _id не найден');
@@ -99,5 +99,5 @@ module.exports = {
   signin,
   signup,
   logout,
-  getCurrentUser,
+  getUserInfo,
 };
