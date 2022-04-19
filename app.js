@@ -7,6 +7,7 @@ const auth = require('./middlewares/auth');
 const { signin, signup, signout } = require('./controllers/user');
 const NotFoundError = require('./errors/NotFoundError');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
+const { signinValidate, signupValidate } = require('./middlewares/validation');
 
 require('dotenv').config();
 
@@ -21,8 +22,8 @@ app.use(cookieParser());
 
 app.use(requestLogger);
 
-app.post('/signin', signin);
-app.post('/signup', signup);
+app.post('/signin', signinValidate, signin);
+app.post('/signup', signupValidate, signup);
 app.get('/signout', auth, signout);
 
 app.use('/', auth, require('./routes/users'));
