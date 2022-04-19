@@ -38,4 +38,5 @@ mongoose.connect(URI, {
   useUnifiedTopology: true,
 });
 
-app.listen(PORT);
+// eslint-disable-next-line no-console
+app.listen(PORT, () => console.log(`Server ha been started on ${PORT}`));
