@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const auth = require('./middlewares/auth');
-const { signin, signup, logout } = require('./controllers/user');
+const { signin, signup, signout } = require('./controllers/user');
 const NotFoundError = require('./errors/NotFoundError');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
@@ -22,7 +22,7 @@ app.use(requestLogger);
 
 app.post('/signin', signin);
 app.post('/signup', signup);
-app.get('/logout', auth, logout);
+app.get('/signout', auth, signout);
 
 app.use('/', auth, require('./routes/users'));
 app.use('/', auth, require('./routes/movies'));

@@ -76,7 +76,7 @@ const signup = (req, res, next) => {
     .catch(next);
 };
 
-const logout = (req, res) => res
+const signout = (req, res) => res
   .clearCookie('jwt', { httpOnly: true, sameSite: true })
   .send({ message: 'Успешно вышли из системы' });
 
@@ -124,7 +124,7 @@ const editProfile = (req, res, next) => {
 module.exports = {
   signin,
   signup,
-  logout,
+  signout,
   getUserInfo,
   editProfile,
 };
