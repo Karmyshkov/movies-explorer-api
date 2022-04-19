@@ -2,6 +2,13 @@ const { celebrate, Joi } = require('celebrate');
 const validator = require('validator');
 const BadRequestError = require('../errors/BadRequestError');
 
+const checkValidEmail = (value) => {
+  if (!validator.isEmail(value)) {
+    throw new BadRequestError('Некорректный email');
+  }
+  return value;
+};
+
 const checkValidURL = (value) => {
   if (!validator.isURL(value)) {
     throw new BadRequestError('Некорректный URL');
@@ -31,7 +38,24 @@ const addMovieValidate = celebrate({
   }),
 });
 
+const signinValidate = celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().custom(checkValidEmail).required(),
+    password: Joi.string().required(),
+  }),
+});
+
+const signupValidate = celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().custom(checkValidEmail).required(),
+    password: Joi.string().required(),
+    name: Joi.string().min(2).max(30),
+  }),
+});
+
 module.exports = {
   movieIdValidate,
   addMovieValidate,
+  signinValidate,
+  signupValidate,
 };
