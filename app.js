@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 const { errors } = require('celebrate');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const routes = require('./routes/index');
+const rateLimiter = require('./middlewares/rateLimit');
 
 require('dotenv').config();
 
@@ -18,6 +19,8 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 
 app.use(requestLogger);
+
+app.use(rateLimiter);
 
 app.use('/', routes);
 
