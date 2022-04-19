@@ -95,9 +95,36 @@ const getUserInfo = (req, res, next) => {
     });
 };
 
+const editProfile = (req, res, next) => {
+  const id = req.user._id;
+  const { email, name } = req.body;
+  User.findByIdAndUpdate(
+    id,
+    {
+      email,
+      name,
+    },
+    { new: true, runValidators: true },
+  )
+    .then((dataUser) => res.status(200).send({ data: dataUser }))
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        throw new BadRequestError(
+          'Переданы некорректные данные при обновлении профиля',
+        );
+      } else if (err.name === 'CastError') {
+        throw new BadRequestError('Пользователь с указанным _id не найден');
+      } else {
+        next(err);
+      }
+    })
+    .catch(next);
+};
+
 module.exports = {
   signin,
   signup,
   logout,
   getUserInfo,
+  editProfile,
 };
