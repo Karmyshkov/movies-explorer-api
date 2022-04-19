@@ -5,6 +5,14 @@ const User = require('../models/User');
 const ConflictError = require('../errors/ConflictError');
 const BadRequestError = require('../errors/BadRequestError');
 const UnauthorizedError = require('../errors/UnauthorizedError');
+const {
+  SUCCESS_SIGNIN,
+  CONFLICT_EMAIL,
+  BAD_REQUEST_AUTH,
+  NOT_FOUND_USER,
+  SUCCESS_SIGNOUT,
+  BAD_REQUEST_USER,
+} = require('../utils/constants');
 
 const { NODE_ENV, SECRET_KEY } = process.env;
 
@@ -37,7 +45,7 @@ const signin = (req, res, next) => {
           sameSite: true,
         })
         .status(200)
-        .send({ message: 'Успешная авторизация' });
+        .send({ message: SUCCESS_SIGNIN });
     })
     .catch(next);
 };
@@ -48,7 +56,7 @@ const signup = (req, res, next) => {
   User.findOne({ email })
     .then((user) => {
       if (user) {
-        throw new ConflictError(`Пользователь с ${email} существует`);
+        throw new ConflictError(CONFLICT_EMAIL);
       }
     })
     .then(() => {
@@ -67,9 +75,7 @@ const signup = (req, res, next) => {
         }))
         .catch((err) => {
           if (err.name === 'ValidationError') {
-            throw new BadRequestError(
-              'Переданы некорректные данные при регистрации',
-            );
+            throw new BadRequestError(BAD_REQUEST_AUTH);
           }
         });
     })
@@ -78,17 +84,17 @@ const signup = (req, res, next) => {
 
 const signout = (req, res) => res
   .clearCookie('jwt', { httpOnly: true, sameSite: true })
-  .send({ message: 'Успешно вышли из системы' });
+  .send({ message: SUCCESS_SIGNOUT });
 
 const getUserInfo = (req, res, next) => {
   User.findById(req.user._id)
     .orFail(() => {
-      throw new BadRequestError('Пользователь с указанным _id не найден');
+      throw new BadRequestError(NOT_FOUND_USER);
     })
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new BadRequestError('Пользователь с указанным _id не найден'));
+        next(new BadRequestError(NOT_FOUND_USER));
       } else {
         next(err);
       }
@@ -109,11 +115,9 @@ const editProfile = (req, res, next) => {
     .then((dataUser) => res.status(200).send({ data: dataUser }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new BadRequestError(
-          'Переданы некорректные данные при обновлении профиля',
-        );
+        throw new BadRequestError(BAD_REQUEST_USER);
       } else if (err.name === 'CastError') {
-        throw new BadRequestError('Пользователь с указанным _id не найден');
+        throw new BadRequestError(NOT_FOUND_USER);
       } else {
         next(err);
       }
