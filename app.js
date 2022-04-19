@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const { errors } = require('celebrate');
 const auth = require('./middlewares/auth');
 const { signin, signup, signout } = require('./controllers/user');
 const NotFoundError = require('./errors/NotFoundError');
@@ -32,6 +33,8 @@ app.use(auth, () => {
 });
 
 app.use(errorLogger);
+
+app.use(errors());
 
 app.use(require('./middlewares/errorHandler'));
 
