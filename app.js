@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const auth = require('./middlewares/auth');
 const { signin, signup } = require('./controllers/user');
 
 require('dotenv').config();
@@ -15,8 +16,8 @@ app.use(bodyParser.json());
 app.post('/signin', signin);
 app.post('/signup', signup);
 
-app.use('/', require('./routes/users'));
-app.use('/', require('./routes/movies'));
+app.use('/', auth, require('./routes/users'));
+app.use('/', auth, require('./routes/movies'));
 
 app.use(require('./middlewares/errorHandler'));
 
