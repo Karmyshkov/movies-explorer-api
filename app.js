@@ -10,7 +10,7 @@ const rateLimiter = require('./middlewares/rateLimit');
 
 require('dotenv').config();
 
-const { URI = 'mongodb://localhost:27017/mestodb', PORT = 3000 } = process.env;
+const { URI = 'mongodb://localhost:27017/movies', PORT = 3000 } = process.env;
 
 const app = express();
 
