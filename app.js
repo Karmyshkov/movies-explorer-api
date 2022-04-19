@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const cors = require('cors');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const { errors } = require('celebrate');
@@ -7,6 +8,7 @@ const helmet = require('helmet');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const routes = require('./routes/index');
 const rateLimiter = require('./middlewares/rateLimit');
+const { ALLOWED_CORS } = require('./utils/constants');
 
 require('dotenv').config();
 
@@ -16,6 +18,8 @@ const app = express();
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
+app.use(cors(ALLOWED_CORS));
 
 app.use(cookieParser());
 

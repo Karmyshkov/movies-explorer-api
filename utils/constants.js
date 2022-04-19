@@ -8,6 +8,12 @@ const SUCCESS_SIGNIN = 'Вы вошли в систему';
 const SUCCESS_SIGNOUT = 'Успешно вышли из системы';
 const CONFLICT_EMAIL = 'Указанная почта занята';
 
+const ALLOWED_CORS = [
+  'http://localhost:3001',
+  'https://api.karmyskov-cinema.nomoredomains.work',
+  'https://karmyskov-cinema-explorer.nomoredomains.work',
+];
+
 module.exports = {
   BAD_REQUEST_MOVIE,
   BAD_REQUEST_AUTH,
@@ -18,4 +24,5 @@ module.exports = {
   SUCCESS_SIGNIN,
   SUCCESS_SIGNOUT,
   CONFLICT_EMAIL,
+  ALLOWED_CORS,
 };
