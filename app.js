@@ -9,4 +9,6 @@ app.post('/signup', signup);
 app.use('/', require('./routes/users'));
 app.use('/', require('./routes/movies'));
 
+app.use(require('./middlewares/errorHandler'));
+
 app.listen(3000);
