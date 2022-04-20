@@ -21,11 +21,11 @@ const signin = (req, res, next) => {
 
   User.findOne({ email }, '+password').then((user) => {
     if (!user) {
-      throw new UnauthorizedError();
+      next(new UnauthorizedError());
     }
     return bcrypt.compare(password, user.password).then((matched) => {
       if (!matched) {
-        throw new UnauthorizedError();
+        next(new UnauthorizedError());
       }
       return user;
     });
@@ -56,7 +56,7 @@ const signup = (req, res, next) => {
   User.findOne({ email })
     .then((user) => {
       if (user) {
-        throw new ConflictError(CONFLICT_EMAIL);
+        next(new ConflictError(CONFLICT_EMAIL));
       }
     })
     .then(() => {
@@ -75,7 +75,7 @@ const signup = (req, res, next) => {
         }))
         .catch((err) => {
           if (err.name === 'ValidationError') {
-            throw new BadRequestError(BAD_REQUEST_AUTH);
+            next(new BadRequestError(BAD_REQUEST_AUTH));
           }
         });
     })
@@ -89,7 +89,7 @@ const signout = (req, res) => res
 const getUserInfo = (req, res, next) => {
   User.findById(req.user._id)
     .orFail(() => {
-      throw new BadRequestError(NOT_FOUND_USER);
+      next(new BadRequestError(NOT_FOUND_USER));
     })
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
@@ -115,9 +115,9 @@ const editProfile = (req, res, next) => {
     .then((dataUser) => res.status(200).send({ data: dataUser }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new BadRequestError(BAD_REQUEST_USER);
+        next(new BadRequestError(BAD_REQUEST_USER));
       } else if (err.name === 'CastError') {
-        throw new BadRequestError(NOT_FOUND_USER);
+        next(new BadRequestError(NOT_FOUND_USER));
       } else {
         next(err);
       }

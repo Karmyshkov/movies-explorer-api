@@ -13,7 +13,7 @@ module.exports = (req, res, next) => {
       NODE_ENV === 'production' ? SECRET_KEY : 'SECRET_KEY_TEST',
     );
   } catch (err) {
-    throw new UnauthorizedError('Необходима авторизация');
+    next(new UnauthorizedError('Необходима авторизация'));
   }
   req.user = payload;
   next();
