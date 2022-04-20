@@ -18,7 +18,7 @@ const checkValidURL = (value) => {
 
 const movieIdValidate = celebrate({
   params: Joi.object().keys({
-    cardId: Joi.string().alphanum().length(24).hex(),
+    movieId: Joi.string().alphanum().length(24).hex(),
   }),
 });
 
