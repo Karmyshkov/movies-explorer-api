@@ -54,31 +54,25 @@ const signin = (req, res, next) => {
 const signup = (req, res, next) => {
   const { email, password, name } = req.body;
 
-  User.findOne({ email })
-    .then((user) => {
-      if (user) {
+  bcrypt
+    .hash(password, 10)
+    .then((hash) => User.create({
+      email,
+      password: hash,
+      name,
+    }))
+    .then((dataUser) => res.status(201).send({
+      data: {
+        name: dataUser.name,
+        email: dataUser.email,
+      },
+    }))
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        next(new BadRequestError(BAD_REQUEST_AUTH));
+      } else if (err.code === 11000) {
         next(new ConflictError(CONFLICT_EMAIL));
       }
-    })
-    .then(() => {
-      bcrypt
-        .hash(password, 10)
-        .then((hash) => User.create({
-          email,
-          password: hash,
-          name,
-        }))
-        .then((dataUser) => res.status(201).send({
-          data: {
-            name: dataUser.name,
-            email: dataUser.email,
-          },
-        }))
-        .catch((err) => {
-          if (err.name === 'ValidationError') {
-            next(new BadRequestError(BAD_REQUEST_AUTH));
-          }
-        });
     })
     .catch(next);
 };
