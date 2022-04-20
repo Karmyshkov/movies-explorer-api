@@ -7,6 +7,7 @@ const NO_RIGHTS = 'У вас нету прав';
 const SUCCESS_SIGNIN = 'Вы вошли в систему';
 const SUCCESS_SIGNOUT = 'Успешно вышли из системы';
 const CONFLICT_EMAIL = 'Указанная почта занята';
+const CONFLICT_CHANGE_EMAIL = 'Указанная почта используется';
 
 const ALLOWED_CORS = [
   'http://localhost:3001',
@@ -25,4 +26,5 @@ module.exports = {
   SUCCESS_SIGNOUT,
   CONFLICT_EMAIL,
   ALLOWED_CORS,
+  CONFLICT_CHANGE_EMAIL,
 };

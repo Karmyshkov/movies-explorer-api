@@ -12,6 +12,7 @@ const {
   NOT_FOUND_USER,
   SUCCESS_SIGNOUT,
   BAD_REQUEST_USER,
+  CONFLICT_CHANGE_EMAIL,
 } = require('../utils/constants');
 
 const { NODE_ENV, SECRET_KEY } = process.env;
@@ -101,28 +102,34 @@ const getUserInfo = (req, res, next) => {
     });
 };
 
-const editProfile = (req, res, next) => {
+const editProfile = async (req, res, next) => {
   const id = req.user._id;
   const { email, name } = req.body;
-  User.findByIdAndUpdate(
-    id,
-    {
-      email,
-      name,
-    },
-    { new: true, runValidators: true },
-  )
-    .then((dataUser) => res.status(200).send({ data: dataUser }))
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        next(new BadRequestError(BAD_REQUEST_USER));
-      } else if (err.name === 'CastError') {
-        next(new BadRequestError(NOT_FOUND_USER));
-      } else {
-        next(err);
-      }
-    })
-    .catch(next);
+
+  const user = await User.find({ email });
+
+  if (user.length > 0) {
+    next(new BadRequestError(CONFLICT_CHANGE_EMAIL));
+  } else {
+    User.findByIdAndUpdate(
+      id,
+      {
+        email,
+        name,
+      },
+      { new: true, runValidators: true },
+    )
+      .then((dataUser) => res.status(200).send({ data: dataUser }))
+      .catch((err) => {
+        if (err.name === 'ValidationError') {
+          next(new BadRequestError(BAD_REQUEST_USER));
+        } else if (err.name === 'CastError') {
+          next(new BadRequestError(NOT_FOUND_USER));
+        } else {
+          next(err);
+        }
+      });
+  }
 };
 
 module.exports = {
