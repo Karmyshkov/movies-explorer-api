@@ -12,7 +12,7 @@ const {
   NOT_FOUND_USER,
   SUCCESS_SIGNOUT,
   BAD_REQUEST_USER,
-  CONFLICT_CHANGE_EMAIL,
+  CONFLICT_USER_DATA,
 } = require('../utils/constants');
 
 const { NODE_ENV, SECRET_KEY } = process.env;
@@ -100,26 +100,39 @@ const editProfile = (req, res, next) => {
   const id = req.user._id;
   const { email, name } = req.body;
 
-  User.findByIdAndUpdate(
-    id,
-    {
-      email,
-      name,
-    },
-    { new: true, runValidators: true },
-  )
+  User.findById(id)
+    .orFail(() => {
+      next(new BadRequestError(NOT_FOUND_USER));
+    })
+    .then((user) => {
+      if (user.email === email || user.name === name) {
+        throw new Error(CONFLICT_USER_DATA);
+      }
+      return User.findByIdAndUpdate(
+        id,
+        {
+          email,
+          name,
+        },
+        { new: true, runValidators: true },
+      );
+    })
     .then((dataUser) => res.status(200).send({ data: dataUser }))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.message === CONFLICT_USER_DATA) {
+        next(new BadRequestError(CONFLICT_USER_DATA));
+      } else if (err.name === 'ValidationError') {
         next(new BadRequestError(BAD_REQUEST_USER));
       } else if (err.name === 'CastError') {
         next(new BadRequestError(NOT_FOUND_USER));
+      } else if (err.codeName === 'DuplicateKey') {
+        next(new ConflictError(CONFLICT_EMAIL));
       } else {
         next(err);
       }
     });
 };
-
+//12223@gmail.com
 module.exports = {
   signin,
   signup,
