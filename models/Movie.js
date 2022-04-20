@@ -59,6 +59,10 @@ const schema = new Schema({
     type: String,
     required: true,
   },
+  movieId: {
+    type: Number,
+    required: true,
+  },
 });
 
 module.exports = model('Movie', schema);
