@@ -62,6 +62,7 @@ const schema = new Schema({
   movieId: {
     type: Number,
     required: true,
+    unique: true,
   },
 });
 
