@@ -132,7 +132,7 @@ const editProfile = (req, res, next) => {
       }
     });
 };
-//12223@gmail.com
+// 12223@gmail.com
 module.exports = {
   signin,
   signup,
