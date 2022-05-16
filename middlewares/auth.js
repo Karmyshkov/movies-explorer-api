@@ -5,7 +5,7 @@ const UnauthorizedError = require("../errors/UnauthorizedError");
 const { NODE_ENV, SECRET_KEY } = process.env;
 
 module.exports = (req, res, next) => {
-  console.log(req.cookies.jwt);
+  console.log(req);
   const token = req.cookies.jwt;
   let payload;
   try {
