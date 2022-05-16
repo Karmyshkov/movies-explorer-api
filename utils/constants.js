@@ -9,12 +9,15 @@ const SUCCESS_SIGNOUT = 'Успешно вышли из системы';
 const CONFLICT_EMAIL = 'Указанная почта используется';
 const CONFLICT_USER_DATA = 'Введены старые данные';
 
-const ALLOWED_CORS = [
-  'http://localhost:3000',
-  'http://localhost:3001',
-  'https://api.karmyskov-cinema.nomoredomains.work',
-  'https://karmyskov-cinema-explorer.nomoredomains.work',
-];
+const ALLOWED_CORS = {
+  origin: [
+    'http://localhost:3000',
+    'http://localhost:3001',
+    'https://api.karmyskov-cinema.nomoredomains.work',
+    'https://karmyskov-cinema-explorer.nomoredomains.work',
+  ],
+  credentials: true,
+};
 
 module.exports = {
   BAD_REQUEST_MOVIE,
