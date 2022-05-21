@@ -27,7 +27,7 @@ app.use(requestLogger);
 
 app.use(helmet());
 
-// app.use(rateLimiter);
+app.use(rateLimiter);
 
 app.use('/', routes);
 
