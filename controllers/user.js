@@ -1,10 +1,10 @@
-require('dotenv').config();
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const User = require('../models/User');
-const ConflictError = require('../errors/ConflictError');
-const BadRequestError = require('../errors/BadRequestError');
-const UnauthorizedError = require('../errors/UnauthorizedError');
+require("dotenv").config();
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const User = require("../models/User");
+const ConflictError = require("../errors/ConflictError");
+const BadRequestError = require("../errors/BadRequestError");
+const UnauthorizedError = require("../errors/UnauthorizedError");
 const {
   SUCCESS_SIGNIN,
   CONFLICT_EMAIL,
@@ -13,34 +13,37 @@ const {
   SUCCESS_SIGNOUT,
   BAD_REQUEST_USER,
   CONFLICT_USER_DATA,
-} = require('../utils/constants');
+} = require("../utils/constants");
 
 const { NODE_ENV, SECRET_KEY } = process.env;
 
 const signin = (req, res, next) => {
   const { email, password } = req.body;
 
-  User.findOne({ email }, '+password').then((user) => {
-    if (!user) {
-      next(new UnauthorizedError());
-    }
-    return bcrypt.compare(password, user.password).then((matched) => {
-      if (!matched) {
+  console.log(email, password);
+
+  User.findOne({ email }, "+password")
+    .then((user) => {
+      if (!user) {
         next(new UnauthorizedError());
       }
-      return user;
-    });
-  })
+      return bcrypt.compare(password, user.password).then((matched) => {
+        if (!matched) {
+          next(new UnauthorizedError());
+        }
+        return user;
+      });
+    })
     .then((user) => {
       const token = jwt.sign(
         { _id: user._id },
-        NODE_ENV === 'production' ? SECRET_KEY : 'SECRET_KEY_TEST',
+        NODE_ENV === "production" ? SECRET_KEY : "SECRET_KEY_TEST",
         {
-          expiresIn: '7d',
-        },
+          expiresIn: "7d",
+        }
       );
       res
-        .cookie('jwt', token, {
+        .cookie("jwt", token, {
           maxAge: 3600000 * 24 * 7,
           httpOnly: true,
           sameSite: true,
@@ -56,19 +59,23 @@ const signup = (req, res, next) => {
 
   bcrypt
     .hash(password, 10)
-    .then((hash) => User.create({
-      email,
-      password: hash,
-      name,
-    }))
-    .then((dataUser) => res.status(201).send({
-      data: {
-        name: dataUser.name,
-        email: dataUser.email,
-      },
-    }))
+    .then((hash) =>
+      User.create({
+        email,
+        password: hash,
+        name,
+      })
+    )
+    .then((dataUser) =>
+      res.status(201).send({
+        data: {
+          name: dataUser.name,
+          email: dataUser.email,
+        },
+      })
+    )
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.name === "ValidationError") {
         next(new BadRequestError(BAD_REQUEST_AUTH));
       } else if (err.code === 11000) {
         next(new ConflictError(CONFLICT_EMAIL));
@@ -77,9 +84,10 @@ const signup = (req, res, next) => {
     .catch(next);
 };
 
-const signout = (req, res) => res
-  .clearCookie('jwt', { httpOnly: true, sameSite: true })
-  .send({ message: SUCCESS_SIGNOUT });
+const signout = (req, res) =>
+  res
+    .clearCookie("jwt", { httpOnly: true, sameSite: true })
+    .send({ message: SUCCESS_SIGNOUT });
 
 const getUserInfo = (req, res, next) => {
   User.findById(req.user._id)
@@ -88,7 +96,7 @@ const getUserInfo = (req, res, next) => {
     })
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err.name === "CastError") {
         next(new BadRequestError(NOT_FOUND_USER));
       } else {
         next(err);
@@ -114,18 +122,18 @@ const editProfile = (req, res, next) => {
           email,
           name,
         },
-        { new: true, runValidators: true },
+        { new: true, runValidators: true }
       );
     })
     .then((dataUser) => res.status(200).send({ data: dataUser }))
     .catch((err) => {
       if (err.message === CONFLICT_USER_DATA) {
         next(new BadRequestError(CONFLICT_USER_DATA));
-      } else if (err.name === 'ValidationError') {
+      } else if (err.name === "ValidationError") {
         next(new BadRequestError(BAD_REQUEST_USER));
-      } else if (err.name === 'CastError') {
+      } else if (err.name === "CastError") {
         next(new BadRequestError(NOT_FOUND_USER));
-      } else if (err.codeName === 'DuplicateKey') {
+      } else if (err.codeName === "DuplicateKey") {
         next(new ConflictError(CONFLICT_EMAIL));
       } else {
         next(err);
