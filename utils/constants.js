@@ -11,7 +11,6 @@ const CONFLICT_USER_DATA = 'Введены старые данные';
 
 const ALLOWED_CORS = {
   origin: [
-    'http://localhost:3000',
     'http://localhost:3001',
     'https://api.karmyskov-cinema.nomoredomains.work',
     'https://karmyskov-cinema-explorer.nomoredomains.work',
