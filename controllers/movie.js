@@ -2,11 +2,16 @@ const Movie = require('../models/Movie');
 const BadRequestError = require('../errors/BadRequestError');
 const NotFoundError = require('../errors/NotFoundError');
 const ForbiddenError = require('../errors/ForbiddenError');
-const { BAD_REQUEST_MOVIE, NOT_FOUND_MOVIE, NO_RIGHTS } = require('../utils/constants');
+const {
+  BAD_REQUEST_MOVIE,
+  NOT_FOUND_MOVIE,
+  NO_RIGHTS,
+} = require('../utils/constants');
 
 const getMovies = (req, res, next) => {
-  Movie.find({})
-    .then((Movies) => res.status(200).send(Movies))
+  const owner = req.user._id;
+  Movie.find({ owner })
+    .then((movies) => res.status(200).send(movies))
     .catch(next);
 };
 

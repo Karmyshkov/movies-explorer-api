@@ -28,8 +28,9 @@ const signin = (req, res, next) => {
       return bcrypt.compare(password, user.password).then((matched) => {
         if (!matched) {
           next(new UnauthorizedError());
+        } else {
+          return user;
         }
-        return user;
       });
     })
     .then((user) => {
@@ -106,7 +107,7 @@ const editProfile = (req, res, next) => {
       next(new BadRequestError(NOT_FOUND_USER));
     })
     .then((user) => {
-      if (user.email === email || user.name === name) {
+      if (user.email === email && user.name === name) {
         throw new Error(CONFLICT_USER_DATA);
       }
       return User.findByIdAndUpdate(
@@ -133,7 +134,7 @@ const editProfile = (req, res, next) => {
       }
     });
 };
-// 12223@gmail.com
+
 module.exports = {
   signin,
   signup,
